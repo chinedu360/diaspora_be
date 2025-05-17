@@ -3,4 +3,37 @@ name = "diaspora_be"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+# We could use any path here, but we are following the community convention
+# We could specify a library name using the `name` field. If unspecified,
+# cargo will default to `package.name`, which is what we want.
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "diaspora_be"
+
 [dependencies]
+actix-web = "4"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+config = "0.15.11"
+
+[dependencies.sqlx]
+version = "0.8.5"
+default-features = false
+features = [
+    "runtime-tokio",           # Use tokio runtime
+    "tls-rustls-ring-webpki",  # Use rustls TLS if you need TLS
+    "macros",                  # For query! macros
+    "postgres",                # PostgreSQL support
+    "uuid",                    # For UUID support
+    "chrono",                  # For timestamps
+    "migrate",                 # For migrations
+    "json",                    # For JSONB support
+    "rust_decimal"             # For DECIMAL columns (choose either this or bigdecimal)
+]
+
+[dev-dependencies]
+reqwest = { version = "0.11", features = ["json"] }

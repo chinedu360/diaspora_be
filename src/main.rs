@@ -1,3 +1,16 @@
-fn main() {
-    println!("Hello, world!");
+use std::net::TcpListener;
+
+use diaspora_be::startup::run;
+use diaspora_be::configuration::get_configuration;
+
+#[actix_web::main] //actix specific a wrapper around tokio::main
+// #[tokio::main] //direct tokio main can still be used
+async fn main() -> std::io::Result<()> {
+    // Panic if we can't read configuration
+    let configuration = get_configuration().expect("Failed to read configuration.");
+
+    // We have removed the hard-coded `8000` - it's now coming from our settings!
+    let address = format!("127.0.0.1:{}", configuration.application_port);
+    let listener = TcpListener::bind(address)?;
+    run(listener)?.await
 }
