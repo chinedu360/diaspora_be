@@ -2,6 +2,7 @@ use actix_web::{HttpResponse, web};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 pub struct CreateItemRequest {
     description: String,
     weight: f64,
@@ -13,6 +14,7 @@ pub struct CreateItemRequest {
 }
 
 #[derive(Deserialize)]
+#[allow(dead_code)]
 struct Dimensions {
     length: f64,
     width: f64,
