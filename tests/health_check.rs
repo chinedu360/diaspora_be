@@ -1,7 +1,7 @@
 use std::net::TcpListener;
 
 use serde_json::json;
-use sqlx::{PgConnection, Connection};
+use sqlx::{Connection, PgConnection};
 
 use diaspora_be::configuration::get_configuration;
 
@@ -44,7 +44,9 @@ async fn item_returns_200_for_valid_json_data() {
 
     // The `Connection` trait MUST be in scope for us to invoke
     // `PgConnection::connect` - it is not an inherent method of the struct!
-    let mut connection = PgConnection::connect(&connection_string).await.expect("Failed to connect to Postgres.");
+    let mut connection = PgConnection::connect(&connection_string)
+        .await
+        .expect("Failed to connect to Postgres.");
     let client = reqwest::Client::new();
 
     // Act
@@ -72,7 +74,10 @@ async fn item_returns_200_for_valid_json_data() {
     //Assert
     assert_eq!(200, response.status().as_u16());
 
-    let saved = sqlx::query!("SELECT * FROM items",).fetch_one(&mut connection).await.expect("Failed to fetch saved item.");
+    let saved = sqlx::query!("SELECT * FROM items",)
+        .fetch_one(&mut connection)
+        .await
+        .expect("Failed to fetch saved item.");
     assert_eq!(saved.weight, Some(2.0));
     assert_eq!(saved.destination_country, Some("Canada".to_string()));
 }

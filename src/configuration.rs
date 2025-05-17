@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use config::Config;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct Settings {
@@ -18,7 +18,10 @@ pub struct DatabaseSetting {
 
 impl DatabaseSetting {
     pub fn connection_string(&self) -> String {
-        format!("postgres://{}:{}@{}:{}/{}", self.username, self.password, self.host, self.port, self.database_name)
+        format!(
+            "postgres://{}:{}@{}:{}/{}",
+            self.username, self.password, self.host, self.port, self.database_name
+        )
     }
 }
 

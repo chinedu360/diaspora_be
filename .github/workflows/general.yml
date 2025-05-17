@@ -10,7 +10,8 @@ on:
 env:
   CARGO_TERM_COLOR: always
   SQLX_VERSION: 0.8.5
-  SQLX_FEATURES: "runtime-tokio,tls-rustls-ring-webpki,macros,postgres,uuid,chrono,migrate,json,rust_decimal"
+  # SQLx CLI has different feature flags than the library
+  SQLX_CLI_FEATURES: "postgres,rustls"
   APP_USER: postgres
   APP_USER_PWD: password
   APP_DB_NAME: diaspora
@@ -38,14 +39,16 @@ jobs:
       - name: Install sqlx-cli
         run: cargo install sqlx-cli
           --version=${{ env.SQLX_VERSION }}
-          --features ${{ env.SQLX_FEATURES }}
+          --features ${{ env.SQLX_CLI_FEATURES }}
           --no-default-features
-          --locked
+          # Removed --locked to avoid yanked package issues
 
       - name: Run database setup script
         run: |
           # Make script executable
           chmod +x scripts/init_db.sh
+          # Export DATABASE_URL for SQLx to use
+          export DATABASE_URL="postgres://postgres:password@localhost:5432/diaspora"
           # Run the script with SKIP_DOCKER=true to skip Docker container creation since we're using GitHub Actions service
           SKIP_DOCKER=true ./scripts/init_db.sh
 
@@ -53,7 +56,9 @@ jobs:
         run: cargo test
 
       - name: Check prepared queries
-        run: cargo sqlx prepare --workspace --check -- --all-targets
+        run: |
+          export DATABASE_URL="postgres://postgres:password@localhost:5432/diaspora"
+          cargo sqlx prepare --workspace --check -- --all-targets
 
   fmt:
     name: Rustfmt
@@ -103,14 +108,16 @@ jobs:
       - name: Install sqlx-cli
         run: cargo install sqlx-cli
           --version=${{ env.SQLX_VERSION }}
-          --features ${{ env.SQLX_FEATURES }}
+          --features ${{ env.SQLX_CLI_FEATURES }}
           --no-default-features
-          --locked
+          # Removed --locked to avoid yanked package issues
       
       - name: Run database setup script
         run: |
           # Make script executable
           chmod +x scripts/init_db.sh
+          # Export DATABASE_URL for SQLx to use
+          export DATABASE_URL="postgres://postgres:password@localhost:5432/diaspora"
           # Run the script with SKIP_DOCKER=true to skip Docker container creation
           SKIP_DOCKER=true ./scripts/init_db.sh
       

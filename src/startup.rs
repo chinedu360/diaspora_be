@@ -1,7 +1,7 @@
+use crate::routes::{create_item, health_check, register_user};
 use actix_web::dev::Server;
 use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
 use std::net::TcpListener;
-use crate::routes::{create_item, health_check, register_user};
 
 #[get("/")]
 async fn hello() -> impl Responder {
