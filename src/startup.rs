@@ -1,7 +1,9 @@
 use crate::routes::{create_item, health_check, register_user};
 use actix_web::dev::Server;
-use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use sqlx::PgPool;
 use std::net::TcpListener;
+use tracing_actix_web::TracingLogger;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -17,16 +19,19 @@ async fn manual_hello() -> impl Responder {
     HttpResponse::Ok().body("Hey, there!")
 }
 
-pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
+pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Error> {
     println!("{:?}", listener);
-    let server = HttpServer::new(|| {
+    let db_pool = web::Data::new(db_pool);
+    let server = HttpServer::new(move || {
         App::new()
+            .wrap(TracingLogger::default())
             .service(hello)
             .service(echo)
             .route("/hey", web::get().to(manual_hello))
             .route("/health_check", web::get().to(health_check))
             .route("/users/register", web::post().to(register_user))
             .route("/items", web::post().to(create_item))
+            .app_data(db_pool.clone())
     })
     .listen(listener)?
     .run();

@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO items (\n            id,\n            description, \n            weight, \n            dimensions, \n            origin_country, \n            destination_country, \n            price,\n            pickup_required,\n            status,\n            created_at,\n            updated_at\n        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Float8",
+        "Jsonb",
+        "Varchar",
+        "Varchar",
+        "Numeric",
+        "Bool",
+        "Varchar",
+        "Timestamptz",
+        "Timestamptz"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b7e8883810147ff2186a2011e829185e76bfcc2ae64625763bd41a91ffd1dffc"
+}
